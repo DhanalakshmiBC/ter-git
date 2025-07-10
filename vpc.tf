@@ -78,7 +78,7 @@ resource "aws_instance" "web" {
   ami           = "ami-061ad72bc140532fd" # Amazon Linux 2 AMI in us-east-1
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.main_subnet.id
-  security_groups = [aws_security_group.allow_ssh.name]
+  security_groups = [aws_security_group.allow_ssh.id]
 
   associate_public_ip_address = true
 
