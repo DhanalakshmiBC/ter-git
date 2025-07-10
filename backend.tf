@@ -1,6 +1,6 @@
 terraform {
     backend "s3" {
-        bucket = "deepu-store-aa"
+        bucket = "deepika-bucket-aaal"
         key = "terraform/state"
         region = "us-east-1"
         encrypt = true
