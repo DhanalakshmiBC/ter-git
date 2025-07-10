@@ -5,10 +5,10 @@ provider "aws" {
 resource "aws_instance" "example_server1" {
     ami = "ami-05ffe3c48a9991133"
     instance_type = "t2.micro"
-    subnet_id = aws_subnet.public_subnets[0].id
-    associate_public_ip_address = true
+    subnet_id              = aws_subnet.public_subnet_1.id
+    key_name               = "my-key-pair"
+    vpc_security_group_ids = [aws_security_group.terrafrom_sg.id]
     tags = {
-        Name = "Depuka-server-1"
-    }
+        Name = "Terraform_Instance"
+  }
 }
-
