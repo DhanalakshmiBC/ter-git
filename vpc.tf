@@ -86,5 +86,5 @@ resource "aws_instance" "web" {
     Name = "web-instance"
   }
 
-  key_name = "your-key-name" # Replace with your existing key pair name
+   # Replace with your existing key pair name
 }
