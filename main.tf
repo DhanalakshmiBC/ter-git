@@ -9,3 +9,4 @@ resource "aws_instance" "example_server1" {
         Name = "ExampleServer1"
     }
 }
+
