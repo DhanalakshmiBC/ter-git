@@ -1,9 +1,9 @@
 provider "aws" {
-  region= "us-west-2"
+  region= "us-east-1"
 }
 
 resource "aws_instance" "example_server1" {
-    ami = "ami-0fe0b46cdde731a2e"
+    ami = "ami-022bbd2ccaf21691f"
     instance_type = "t2.micro"
     tags = {
         Name = "ExampleServer1"
