@@ -75,7 +75,7 @@ resource "aws_security_group" "allow_ssh" {
 
 # EC2 Instance
 resource "aws_instance" "web" {
-  ami           = "ami-0c02fb55956c7d316" # Amazon Linux 2 AMI in us-east-1
+  ami           = "ami-061ad72bc140532fd" # Amazon Linux 2 AMI in us-east-1
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.main_subnet.id
   security_groups = [aws_security_group.allow_ssh.name]
