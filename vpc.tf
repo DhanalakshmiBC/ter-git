@@ -1,69 +1,90 @@
-resource "aws_vpc" "my_vpc" {
+provider "aws" {
+  region = "us-east-1"
+}
+
+# VPC
+resource "aws_vpc" "main_vpc" {
   cidr_block = "10.0.0.0/16"
-  instance_tenancy = "default"
-  enable_dns_support = "true"
-  enable_dns_hostnames = "true"
   tags = {
-    Name = "My_VPC"
+    Name = "main-vpc"
   }
 }
 
-resource "aws_subnet" "public_subnet_1" {
-  vpc_id = aws_vpc.my_vpc.id
+# Subnet
+resource "aws_subnet" "main_subnet" {
+  vpc_id     = aws_vpc.main_vpc.id
   cidr_block = "10.0.1.0/24"
-  map_public_ip_on_launch = "true"
-  availability_zone = var.ZONE1
+  availability_zone = "us-east-1a"
   tags = {
-    Name = "Public_Subnet_1"
+    Name = "main-subnet"
   }
 }
 
-resource "aws_internet_gateway" "IGW" {
-  vpc_id = aws_vpc.my_vpc.id
+# Internet Gateway
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main_vpc.id
   tags = {
-    Name = "IGW"
+    Name = "main-igw"
   }
 }
 
-resource "aws_route_table" "public_RT" {
-  vpc_id = aws_vpc.my_vpc.id
+# Route Table
+resource "aws_route_table" "main_rt" {
+  vpc_id = aws_vpc.main_vpc.id
 
-
-  route = {
+  route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.IGW.id
+    gateway_id = aws_internet_gateway.igw.id
   }
+
   tags = {
-    Name = "Pulic_RT"
+    Name = "main-rt"
   }
 }
 
-resource "aws_route_table_association" "public_subnet_1a" {
-  subnet_id = aws_subnet.public_subnet_1.id
-  route_table_id = aws_route_table.public_RT.id
+# Route Table Association
+resource "aws_route_table_association" "a" {
+  subnet_id      = aws_subnet.main_subnet.id
+  route_table_id = aws_route_table.main_rt.id
 }
 
-resource "aws_security_group" "terrafrom_sg" {
+# Security Group
+resource "aws_security_group" "allow_ssh" {
   name        = "allow_ssh"
-  description = "sg for to allow ssh"
-  vpc_id      = aws_vpc.my_vpc.id
+  description = "Allow SSH inbound traffic"
+  vpc_id      = aws_vpc.main_vpc.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   tags = {
-    Name = "Terraform_project_sg"
+    Name = "allow_ssh"
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv4" {
-  security_group_id = aws_security_group.terrafrom_sg.id
-  cidr_ipv4         = ["0.0.0.0/0"]
-  from_port         = 22
-  ip_protocol       = "tcp"
-  to_port           = 22
-}
+# EC2 Instance
+resource "aws_instance" "web" {
+  ami           = "ami-0c02fb55956c7d316" # Amazon Linux 2 AMI in us-east-1
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.main_subnet.id
+  security_groups = [aws_security_group.allow_ssh.name]
 
+  associate_public_ip_address = true
 
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
-  security_group_id = aws_security_group.terrafrom_sg.id
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "-1" # semantically equivalent to all ports
+  tags = {
+    Name = "web-instance"
+  }
+
+  key_name = "your-key-name" # Replace with your existing key pair name
 }
