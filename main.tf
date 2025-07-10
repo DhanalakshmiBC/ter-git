@@ -7,7 +7,7 @@ resource "aws_instance" "example_server1" {
     instance_type = "t2.micro"
     subnet_id = aws_subnet.public_subnets[0].id
     tags = {
-        Name = "ExampleServer1"
+        Name = "Depuka-server-1"
     }
 }
 
