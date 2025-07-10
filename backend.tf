@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket         = "deepika-bucket-aaal"
     key            = "terraform/state"
-    region         = "us-west-2"
+    region         = "us-west-1"
     encrypt = true
     
   }
